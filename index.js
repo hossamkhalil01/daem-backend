@@ -6,7 +6,7 @@ const ENV = require("./utils/env");
 const passport = require("passport");
 const passportUtils = require("./utils/auth/passport");
 const configs = require("./configs");
-
+const User = require("./models/user");
 
 const app = express();
 
@@ -41,3 +41,18 @@ app.use(passport.initialize());
 // add resources routers
 app.use("/auth", require("./routes/auth"));
 app.use("/tickets", require("./routes/tickets"));
+
+
+// try {
+//   User.create({
+//     firstname: "hossam",
+//     lastname: "mohamed",
+//     email: "hossammob96@gmail.com",
+//     password: "12345",
+//     gender: "male",
+//   });
+
+//   console.log("created");
+// } catch (error) {
+//   console.log(error)
+// }

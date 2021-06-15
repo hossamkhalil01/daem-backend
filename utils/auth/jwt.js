@@ -8,6 +8,7 @@ const secret = ENV.getVar("SECRETKEY");
 // create jwt object
 const issueJWT = (user) => {
 
+  const expiresIn = ENV.getVar("AUTH_EXPIRATION") || defaultExpiration;
   const userId = user._id
 
   const payload = {
@@ -16,7 +17,7 @@ const issueJWT = (user) => {
   };
 
   const signedToken = jwt.sign(payload, secret, {
-    expiresIn: ENV.getVar("AUTH_EXPIRATION") || defaultExpiration,
+    expiresIn,
     algorithm: "HS256",
   });
 
