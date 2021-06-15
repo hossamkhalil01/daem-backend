@@ -3,7 +3,7 @@ const MEDIUM = 1;
 const HIGH = 2;
 const CRITICAL = 3;
 
-export default {
+module.exports = {
   LOW,
   MEDIUM,
   HIGH,

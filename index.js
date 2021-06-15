@@ -39,4 +39,5 @@ passportUtils.createStrategy(passport);
 app.use(passport.initialize());
 
 // add resources routers
+app.use("/auth", require("./routes/auth"));
 app.use("/tickets", require("./routes/tickets"));
