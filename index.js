@@ -1,14 +1,19 @@
-require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const app = express();
+const ENV = require("./utils/env");
+const passport = require("passport");
+const passportUtils = require("./utils/auth/passport");
 const configs = require("./configs");
 
+
+const app = express();
+
+
 // get the enviornment configs
-const ENV = process.env.NODE_ENV || "dev";
-const { DB_URI, PORT } = configs[ENV];
+const curr_env = ENV.getVar("NODE_ENV") || "dev";
+const { DB_URI, PORT } = configs[curr_env];
 
 // connect to DB
 mongoose
@@ -28,6 +33,10 @@ mongoose
 // add middlewares
 app.use(express.json());
 app.use(cors());
+
+// add auth middleware
+passportUtils.createStrategy(passport);
+app.use(passport.initialize());
 
 // add resources routers
 app.use("/tickets", require("./routes/tickets"));
