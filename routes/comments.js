@@ -2,9 +2,11 @@ const express = require("express");
 const commentsController = require("../controllers/commentsController");
 
 // init router
-const Router = express.Router();
+const Router = express.Router({
+  mergeParams: true,
+});
 
-/** 
+/**
 GET 
 Route: / 
 Results: All Comments

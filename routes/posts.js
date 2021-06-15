@@ -9,7 +9,7 @@ GET
 Route: / 
 Results: All Posts
 **/
-Router.get("/", postsController.getTickets);
+Router.get("/", postsController.getPosts);
 
 /** 
 GET 
