@@ -9,6 +9,7 @@ const {
 } = require("../utils/responses");
 
 
+
 const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -47,8 +48,20 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
 
+  let newUser = req.body;
+
+  if (typeof (req.body) !== "object") newUser = JSON.parse(req.body);
+
+
+  let avatar = "public/images/avatars/default.png";
+
+  // check if image exists
+  if (req.file) {
+    avatar = req.file.destination + req.file.filename;
+  }
+
   try {
-    const user = await User.create(req.body);
+    const user = await User.create({ ...newUser, avatar });
 
     return sendResponse(
       res,

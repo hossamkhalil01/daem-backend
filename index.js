@@ -30,13 +30,17 @@ mongoose
     console.log(err);
   });
 
-// add middlewares
+/* Middlewares */
 app.use(express.json());
 app.use(cors());
 
-// add auth middleware
+// static files middleware
+app.use("/public", express.static("public/"));
+
+// auth middleware
 passportUtils.createStrategy(passport);
 app.use(passport.initialize());
+
 
 // add resources routers
 app.use("/auth", require("./routes/auth"));
