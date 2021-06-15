@@ -8,6 +8,7 @@ const secret = ENV.getVar("SECRETKEY");
 // create jwt object
 const issueJWT = (user) => {
 
+
   const expiresIn = ENV.getVar("AUTH_EXPIRATION") || defaultExpiration;
   const userId = user._id
 

@@ -9,7 +9,6 @@ const {
 } = require("../utils/responses");
 
 
-
 const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -28,21 +27,15 @@ const login = async (req, res) => {
       );
     }
 
-    // create the token
-    const jwt = jwtUtils.issueJWT(user);
-
-    // remove password from the user
-    delete user._doc.password;
-
-
     return sendResponse(
       res,
-      { user, token: jwt.token, expiresIn: jwt.expiresIn },
+      createTokenResponse(user),
       statusCodes.success.ok
     );
 
   } catch (error) {
 
+    console.log(error);
     return sendError(
       res,
       errorMessages.notFound,
@@ -51,4 +44,33 @@ const login = async (req, res) => {
   }
 }
 
-module.exports = { login };
+
+const register = async (req, res) => {
+
+  try {
+    const user = await User.create(req.body);
+
+    return sendResponse(
+      res,
+      createTokenResponse(user),
+      statusCodes.success.created
+    );
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  };
+}
+
+
+// create user token and return the response
+const createTokenResponse = (user) => {
+
+  const jwt = jwtUtils.issueJWT(user);
+
+  // remove password from the user
+  delete user._doc.password;
+
+  return { user, token: jwt.token, expiresIn: jwt.expiresIn };
+}
+
+
+module.exports = { login, register };
