@@ -1,17 +1,20 @@
 const { model, Schema } = require("mongoose");
 const passwordHash = require("../middlewares/passwordHash");
 
-
 const userSchema = new Schema({
   firstname: {
     type: String,
     required: "First name is required",
     trim: true,
+    minLength: [3, "First name must be at least 3 chars"],
+    maxLength: [25, "First name must not exceed 25 chars"],
   },
   lastname: {
     type: String,
     required: "Last name is required",
     trim: true,
+    minLength: [3, "Last name must be at least 3 chars"],
+    maxLength: [25, "Last name must not exceed 25 chars"],
   },
   email: {
     type: String,
@@ -27,6 +30,7 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: "Password is required",
+    minLength: [8, "Password must be at least 8 chars"],
   },
   avatar: {
     type: String,
@@ -59,10 +63,8 @@ userSchema.virtual("age").get(function () {
   );
 });
 
-
 // apply password hash hook
 userSchema.pre("save", passwordHash);
-
 
 const User = model("User", userSchema);
 
