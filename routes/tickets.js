@@ -41,6 +41,6 @@ DELETE
 Route: / 
 Results: delete Tickets
 **/
-Router.get("/:id", ticketsController.deleteTicket);
+Router.delete("/:id", ticketsController.deleteTicket);
 
 module.exports = Router;
