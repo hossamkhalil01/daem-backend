@@ -25,6 +25,7 @@ const statusCodes = {
 const errorMessages = {
   notFound: "Not found",
   missingParam: "Missing a required field",
+  unAuthorized: "you don't have access to this resource",
 };
 
 module.exports = { errorMessages, sendError, sendResponse, statusCodes };
