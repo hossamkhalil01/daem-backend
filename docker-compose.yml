@@ -10,6 +10,7 @@ services:
       - "27017:27017"
 
   express-daem-app:
+    build: .
     image: abdohsn/express-daem-app
     container_name: daem_app
     volumes:
