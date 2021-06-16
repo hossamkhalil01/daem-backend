@@ -1,5 +1,5 @@
-import { model, Schema } from "mongoose";
-import urgencyLevel from "../utils/urgency-level";
+const { model, Schema } = require("mongoose");
+const urgencyLevel = require("../utils/urgencyLevel");
 
 const ticketSchema = new Schema(
   {
@@ -46,4 +46,5 @@ const ticketSchema = new Schema(
 );
 
 const Ticket = model("Ticket", ticketSchema);
-export default Ticket;
+
+module.exports = Ticket;
