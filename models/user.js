@@ -1,5 +1,6 @@
 const { model, Schema } = require("mongoose");
 const passwordHash = require("../middlewares/passwordHash");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 
 const userSchema = new Schema({
@@ -63,7 +64,7 @@ userSchema.virtual("age").get(function () {
 // apply password hash hook
 userSchema.pre("save", passwordHash);
 
+// Add pagination plugin
+userSchema.plugin(mongoosePaginate);
 
-const User = model("User", userSchema);
-
-module.exports = User;
+module.exports = model("User", userSchema);
