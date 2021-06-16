@@ -18,8 +18,20 @@ const createTicket = (req, res) => {
   res.send("createTicket works");
 };
 
-const updateTicket = (req, res) => {
-  res.send("updateTicket works");
+const updateTicket = async (req, res) => {
+  const id = req.params.id;
+  console.log(req.body);
+  try {
+    const updatedTicket = await Ticket.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updatedTicket)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+    return sendResponse(res, updatedTicket, statusCodes.success.ok);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
 };
 
 const deleteTicket = async (req, res) => {

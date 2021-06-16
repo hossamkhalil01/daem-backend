@@ -34,7 +34,7 @@ PUT
 Route: /id 
 Results: update Ticket
 **/
-Router.get("/:id", ticketsController.updateTicket);
+Router.patch("/:id", ticketsController.updateTicket);
 
 /** 
 DELETE 
