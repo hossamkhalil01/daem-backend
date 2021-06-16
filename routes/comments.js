@@ -11,7 +11,10 @@ GET
 Route: / 
 Results: All Comments
 **/
-Router.get("/", commentsController.getComments);
+Router.get(
+  "/",
+  commentsController.getComments
+);
 
 /** 
 GET 
