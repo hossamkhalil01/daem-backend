@@ -9,7 +9,7 @@ const {
 
 
 
-const getTickets = (req, res) => {
+const getTickets = async (req, res) => {
   // process the query params
   const [{ limit, page }, filter] = extractPaginationInfo(req.query);
 
