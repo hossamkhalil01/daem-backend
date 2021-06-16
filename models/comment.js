@@ -1,4 +1,7 @@
 const { model, Schema } = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
+
+
 const commentSchema = new Schema(
   {
     author: {
@@ -19,6 +22,8 @@ const commentSchema = new Schema(
   { timestamps: true }
 );
 
-const Comment = model("Comment", commentSchema);
 
-module.export = Comment;
+// Add pagination plugin
+commentSchema.plugin(mongoosePaginate);
+
+module.export = model("Comment", commentSchema);
