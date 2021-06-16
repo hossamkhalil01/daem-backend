@@ -25,5 +25,3 @@ module.exports = {
   updateTicket,
   deleteTicket,
 };
-
-module.exports = { getTickets };
