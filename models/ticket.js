@@ -41,7 +41,7 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    checked: {
+    isChecked: {
       type: Boolean,
       default: false,
     },

@@ -20,12 +20,15 @@ const createTicket = (req, res) => {
 
 const updateTicket = async (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
   try {
-    const updatedTicket = await Ticket.findOneAndUpdate({ _id: id }, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedTicket = await Ticket.findOneAndUpdate(
+      { _id: id },
+      req.body.updates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!updatedTicket)
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
     return sendResponse(res, updatedTicket, statusCodes.success.ok);
