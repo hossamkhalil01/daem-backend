@@ -43,4 +43,12 @@ Results: delete Tickets
 **/
 Router.delete("/:id", ticketsController.deleteTicket);
 
+/** 
+DELETE 
+Route: / 
+Results: delete Tickets
+**/
+Router.delete("/:id/remove-doctor", ticketsController.removeTicketDoctor);
+
+
 module.exports = Router;

@@ -1,7 +1,6 @@
 const { model, Schema } = require("mongoose");
 const passwordHash = require("../middlewares/passwordHash");
 
-
 const userSchema = new Schema({
   firstname: {
     type: String,
@@ -53,17 +52,6 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.virtual("age").get(function () {
-  return Math.floor(
-    (Date.now() - this.DOB.getTime()) / (1000 * 3600 * 24 * 365)
-  );
-});
-
-
-// apply password hash hook
 userSchema.pre("save", passwordHash);
-
-
 const User = model("User", userSchema);
-
 module.exports = User;

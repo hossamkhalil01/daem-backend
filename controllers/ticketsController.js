@@ -39,9 +39,23 @@ const updateTicket = async (req, res) => {
 
 const deleteTicket = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
   try {
     const ticket = await Ticket.findOneAndDelete({ _id: id });
+    if (!ticket)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+    return sendResponse(res, ticket, statusCodes.success.noContent);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
+};
+
+const removeTicketDoctor = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const ticket = await Ticket.findOne({ _id: id }, function (err, _ticket) {
+      _ticket.doctor = undefined;
+      _ticket.save();
+    });
     if (!ticket)
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
     return sendResponse(res, ticket, statusCodes.success.noContent);
@@ -56,4 +70,5 @@ module.exports = {
   createTicket,
   updateTicket,
   deleteTicket,
+  removeTicketDoctor
 };
