@@ -42,6 +42,10 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    isChecked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
