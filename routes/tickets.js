@@ -35,6 +35,8 @@ Results: create Ticket
 **/
 Router.post("/", ticketsController.createTicket);
 
+Router.post("/multipleupload", ticketsController.multipleUpload);
+
 /** 
 PUT
 Route: /id 
@@ -55,6 +57,5 @@ Route: /
 Results: delete Tickets
 **/
 Router.delete("/:id/remove-doctor", ticketsController.removeTicketDoctor);
-
 
 module.exports = Router;

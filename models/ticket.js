@@ -1,6 +1,6 @@
 const { model, Schema } = require("mongoose");
 const urgencyLevel = require("../utils/urgencyLevel");
-const mongoosePaginate = require('mongoose-paginate-v2');
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const ticketSchema = new Schema(
   {
