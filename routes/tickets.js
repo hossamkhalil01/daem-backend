@@ -1,5 +1,7 @@
 const express = require("express");
 const ticketsController = require("../controllers/ticketsController");
+const { isDoctor } = require("../middlewares/authorization");
+const passport = require("passport");
 
 // init router
 const Router = express.Router();
@@ -13,7 +15,11 @@ GET
 Route: / 
 Results: All Tickets
 **/
-Router.get("/", ticketsController.getTickets);
+Router.get(
+  "/",
+  [passport.authenticate("jwt", { session: false }), isDoctor],
+  ticketsController.getTickets
+);
 
 /** 
 GET 

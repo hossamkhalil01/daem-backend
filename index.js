@@ -44,5 +44,6 @@ app.use(passport.initialize());
 
 // add resources routers
 app.use("/auth", require("./routes/auth"));
+app.use("/users", require("./routes/users"));
 app.use("/tickets", require("./routes/tickets"));
 app.use("/doctors", require("./routes/doctors"));

@@ -1,16 +1,21 @@
 const { model, Schema } = require("mongoose");
 const passwordHash = require("../middlewares/passwordHash");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const userSchema = new Schema({
   firstname: {
     type: String,
     required: "First name is required",
     trim: true,
+    minLength: [3, "First name must be at least 3 chars"],
+    maxLength: [25, "First name must not exceed 25 chars"],
   },
   lastname: {
     type: String,
     required: "Last name is required",
     trim: true,
+    minLength: [3, "Last name must be at least 3 chars"],
+    maxLength: [25, "Last name must not exceed 25 chars"],
   },
   email: {
     type: String,
@@ -26,6 +31,7 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: "Password is required",
+    minLength: [8, "Password must be at least 8 chars"],
   },
   avatar: {
     type: String,
@@ -52,6 +58,16 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.virtual("age").get(function () {
+  return Math.floor(
+    (Date.now() - this.DOB.getTime()) / (1000 * 3600 * 24 * 365)
+  );
+});
+
+// apply password hash hook
 userSchema.pre("save", passwordHash);
-const User = model("User", userSchema);
-module.exports = User;
+
+// Add pagination plugin
+userSchema.plugin(mongoosePaginate);
+
+module.exports = model("User", userSchema);

@@ -1,5 +1,6 @@
 const { model, Schema } = require("mongoose");
 const urgencyLevel = require("../utils/urgencyLevel");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const ticketSchema = new Schema(
   {
@@ -49,6 +50,7 @@ const ticketSchema = new Schema(
   { timestamps: true }
 );
 
-const Ticket = model("Ticket", ticketSchema);
+// Add pagination plugin
+ticketSchema.plugin(mongoosePaginate);
 
-module.exports = Ticket;
+module.exports = model("Ticket", ticketSchema);
