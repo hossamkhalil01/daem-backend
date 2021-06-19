@@ -32,7 +32,7 @@ const getTickets = async (req, res) => {
 const getTicket = async (req, res) => {
   const id = req.params.id;
   try {
-    const ticket = await Ticket.findOne({ _id: id }).populate("patient","firstname lastname gender DOB");
+    const ticket = await Ticket.findOne({ _id: id }).populate("patient","firstname lastname gender DOB").populate("doctor","firstname lastname");
     if (!ticket)
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
     return sendResponse(res, ticket, statusCodes.success.ok);
