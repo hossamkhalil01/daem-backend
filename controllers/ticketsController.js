@@ -7,8 +7,6 @@ const {
   errorMessages,
 } = require("../utils/responses");
 
-
-
 const getTickets = async (req, res) => {
   // process the query params
   const [{ limit, page }, filter] = extractPaginationInfo(req.query);
@@ -31,8 +29,16 @@ const getTickets = async (req, res) => {
   }
 };
 
-const getTicket = (req, res) => {
-  res.send("getTicket works");
+const getTicket = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const ticket = await Ticket.findOne({ _id: id }).populate("patient","firstname lastname gender DOB").populate("doctor","firstname lastname");
+    if (!ticket)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+    return sendResponse(res, ticket, statusCodes.success.ok);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
 };
 
 const createTicket = (req, res) => {
@@ -91,5 +97,5 @@ module.exports = {
   createTicket,
   updateTicket,
   deleteTicket,
-  removeTicketDoctor
+  removeTicketDoctor,
 };
