@@ -26,6 +26,7 @@ const errorMessages = {
   notFound: "Not found",
   missingParam: "Missing a required field",
   unAuthorized: "you don't have access to this resource",
+  invalidMediaType: "Only .png, .jpg and .jpeg format allowed!'",
 };
 
 module.exports = { errorMessages, sendError, sendResponse, statusCodes };
