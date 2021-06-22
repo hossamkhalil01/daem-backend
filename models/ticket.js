@@ -41,6 +41,7 @@ const ticketSchema = new Schema(
     doctor: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      default: null,
     },
     isChecked: {
       type: Boolean,

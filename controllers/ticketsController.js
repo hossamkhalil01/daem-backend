@@ -7,8 +7,6 @@ const {
   errorMessages,
 } = require("../utils/responses");
 
-const upload = require("../middlewares/upload");
-
 const getTickets = async (req, res) => {
   // process the query params
   const [{ limit, page }, filter] = extractPaginationInfo(req.query);
@@ -35,29 +33,17 @@ const getTicket = (req, res) => {
   res.send("getTicket works");
 };
 
-const multipleUpload = async (req, res) => {
+const createTicket = async (req, res) => {
+  const imagesPaths = req.files.map(({path}) => path);
   try {
-    await upload(req, res);
-    console.log(req.files);
+    const newTicket = await Ticket.create(
+      { ...req.body, patient : '60d13143e7f421d412434436', images: imagesPaths });
 
-    if (req.files.length <= 0) {
-      return res.send(`You must select at least 1 file.`);
-    }
-
-    return res.send(`Files has been uploaded.`);
+    return sendResponse(res, newTicket, statusCodes.success.created);
   } catch (error) {
-    console.log(error);
-
-    if (error.code === "LIMIT_UNEXPECTED_FILE") {
-      return res.send("Too many files to upload.");
-    }
-    return res.send(`Error when trying upload many files: ${error}`);
+    return sendError(res, error.message, statusCodes.error.invalidData);
   }
-};
 
-const createTicket = (req, res) => {
-  console.log(req.body);
-  res.send("createTicket works");
 };
 
 const updateTicket = async (req, res) => {
@@ -113,5 +99,4 @@ module.exports = {
   updateTicket,
   deleteTicket,
   removeTicketDoctor,
-  multipleUpload,
 };
