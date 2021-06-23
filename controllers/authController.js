@@ -23,7 +23,7 @@ const login = async (req, res) => {
     if (!isCorrectPassword) {
       return sendError(
         res,
-        errorMessages.notFound,
+        errorMessages.invalidAuth,
         statusCodes.error.invalidData
       );
     }
@@ -35,11 +35,9 @@ const login = async (req, res) => {
     );
 
   } catch (error) {
-
-    console.log(error);
     return sendError(
       res,
-      errorMessages.notFound,
+      errorMessages.invalidAuth,
       statusCodes.error.invalidData
     );
   }
