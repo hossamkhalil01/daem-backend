@@ -26,7 +26,8 @@ const errorMessages = {
   notFound: "Not found",
   missingParam: "Missing a required field",
   unAuthorized: "You don't have access to this resource",
-  invalidAuth: "Invalid email or password."
+  invalidAuth: "Invalid email or password.",
+  invalidMediaType: "Only .png, .jpg and .jpeg format allowed",
 };
 
 module.exports = { errorMessages, sendError, sendResponse, statusCodes };
