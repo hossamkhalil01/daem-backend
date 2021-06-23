@@ -2,14 +2,14 @@ const jwt = require("jsonwebtoken");
 const ENV = require("../env");
 
 const defaultExpiration = "30d";
-const secret = ENV.getVar("SECRETKEY");
+const secret = ENV.getVar("TOKEN_SECRET_KEY");
 
 
 // create jwt object
 const issueJWT = (user) => {
 
 
-  const expiresIn = ENV.getVar("AUTH_EXPIRATION") || defaultExpiration;
+  const expiresIn = ENV.getVar("TOKEN_EXPIRATION") || defaultExpiration;
   const userId = user._id
 
   const payload = {

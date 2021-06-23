@@ -40,13 +40,21 @@ PUT
 Route: /id 
 Results: update Ticket
 **/
-Router.get("/:id", ticketsController.updateTicket);
+Router.patch("/:id", ticketsController.updateTicket);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Tickets
 **/
-Router.get("/:id", ticketsController.deleteTicket);
+Router.delete("/:id", ticketsController.deleteTicket);
+
+/** 
+DELETE 
+Route: / 
+Results: delete Tickets
+**/
+Router.delete("/:id/remove-doctor", ticketsController.removeTicketDoctor);
+
 
 module.exports = Router;
