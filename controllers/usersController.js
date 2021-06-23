@@ -6,6 +6,8 @@ const {
   sendResponse,
   errorMessages,
 } = require("../utils/responses");
+const { deleteFile } = require("../utils/fileSystem");
+const uploadObj = require("../middlewares/avatarImageUpload");
 
 
 const getUsers = async (req, res) => {
@@ -63,13 +65,12 @@ const updateUser = async (req, res, id, updates) => {
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
 
     // updated
-    return sendResponse(res, updatedUser, statusCodes.success.ok);
+    return true;
 
   } catch (error) {
     // invalid params
-    return sendError(res, error.message, statusCodes.error.invalidData);
+    return false;
   }
-
 }
 
 const updateUserRole = (req, res) => {
@@ -77,20 +78,52 @@ const updateUserRole = (req, res) => {
   const id = req.params.id;
   const updates = { role: req.body.role };
 
-  return updateUser(req, res, id, updates)
+  //update user
+  if (updateUser(req, res, id, updates))
+    return sendResponse(res, updatedUser, statusCodes.success.ok);
+
+  // error occured
+  return sendError(res, error.message, statusCodes.error.invalidData);
+
 };
 
 const updateCurrentUser = (req, res) => {
 
-  const id = req.user._id;
-  const updates = req.body;
+  const upload = uploadObj.single("avatar");
 
-  if (req.file) {
-    avatar = req.file.destination + req.file.filename;
-    updates.avatar = avatar;
-  }
+  upload(req, res, async (err) => {
 
-  return updateUser(req, res, id, updates)
+    if (err) {
+      return sendError(
+        res,
+        errorMessages.invalidMediaType,
+        statusCodes.error.invalidMediaType
+      );
+    }
+
+    const id = req.user._id;
+    let updates = req.body;
+
+    if (typeof (req.body) !== "object") updates = JSON.parse(req.body);
+
+    // check if image exists
+    if (req.file) {
+      updates.avatar = req.file.destination + req.file.filename;
+    }
+
+    // update user
+    if (updateUser(req, res, id, updates))
+      return sendResponse(res, updatedUser, statusCodes.success.ok);
+
+
+    // error occured
+
+    // delete the image if uploaded
+    updates.avatar ? deleteFile(updates.avatar) : '';
+
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  });
+
 }
 
 

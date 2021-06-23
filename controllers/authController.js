@@ -10,7 +10,6 @@ const {
 const { deleteFile } = require("../utils/fileSystem");
 const uploadObj = require("../middlewares/avatarImageUpload");
 
-
 const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -18,8 +17,10 @@ const login = async (req, res) => {
     if (!user)
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
 
-
-    const isCorrectPassword = await bcrypt.compare(req.body.password, user.password);
+    const isCorrectPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
 
     if (!isCorrectPassword) {
       return sendError(
@@ -29,12 +30,7 @@ const login = async (req, res) => {
       );
     }
 
-    return sendResponse(
-      res,
-      createTokenResponse(user),
-      statusCodes.success.ok
-    );
-
+    return sendResponse(res, createTokenResponse(user), statusCodes.success.ok);
   } catch (error) {
     return sendError(
       res,
@@ -42,16 +38,12 @@ const login = async (req, res) => {
       statusCodes.error.invalidData
     );
   }
-}
-
+};
 
 const register = async (req, res) => {
-
-
   const upload = uploadObj.single("avatar");
 
   upload(req, res, async (err) => {
-
     if (err) {
       return sendError(
         res,
@@ -60,48 +52,42 @@ const register = async (req, res) => {
       );
     }
 
-    const newUser = req.body;
+    let newUser = req.body;
 
-    if (typeof (req.body) !== "object") newUser = JSON.parse(req.body);
+    if (typeof req.body !== "object") newUser = JSON.parse(req.body);
 
-    let avatar = "public/images/avatars/default.png";
+    newUser.avatar = "public/images/avatars/default.png";
 
     // check if image exists
     if (req.file) {
-      avatar = req.file.destination + req.file.filename;
+      newUser.avatar = req.file.destination + req.file.filename;
     }
 
     //create user
     try {
-      const user = await User.create({ ...newUser, avatar });
+      const user = await User.create({ ...newUser });
       return sendResponse(
         res,
         createTokenResponse(user),
         statusCodes.success.created
       );
     } catch (error) {
-
-      // remove the avatar from server
-      deleteFile(avatar);
+      // remove the avatar from server if it's uploaded
+      newUser.avatar ? deleteFile(newUser.avatar) : "";
 
       return sendError(res, error.message, statusCodes.error.invalidData);
-    };
-
+    }
   });
-
-}
-
+};
 
 // create user token and return the response
 const createTokenResponse = (user) => {
-
   const jwt = jwtUtils.issueJWT(user);
 
   // remove password from the user
   delete user._doc.password;
 
   return { user, token: jwt.token, expiresIn: jwt.expiresIn };
-}
-
+};
 
 module.exports = { login, register };
