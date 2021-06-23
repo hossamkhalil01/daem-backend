@@ -1,5 +1,7 @@
 const express = require("express");
 const usersController = require("../controllers/usersController");
+const { isModerator } = require("../middlewares/authorization");
+const passport = require("passport");
 
 // init router
 const Router = express.Router();
@@ -9,7 +11,10 @@ GET
 Route: / 
 Results: All Users
 **/
-Router.get("/", usersController.getUsers);
+Router.get("/",
+  [passport.authenticate("jwt", { session: false }),
+  ],
+  usersController.getUsers);
 
 /** 
 GET 

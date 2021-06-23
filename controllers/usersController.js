@@ -14,6 +14,7 @@ const getUsers = async (req, res) => {
 
   // the pagination options
   const options = {
+    select: 'firstname lastname email avatar role',
     sort: { _id: -1 },
     page,
     limit,
