@@ -7,7 +7,8 @@ const {
   sendError,
   errorMessages,
 } = require("../utils/responses");
-
+const { deleteFile } = require("../utils/fileSystem");
+const uploadObj = require("../middlewares/avatarImageUpload");
 
 
 const login = async (req, res) => {
@@ -46,29 +47,48 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
 
-  let newUser = req.body;
 
-  if (typeof (req.body) !== "object") newUser = JSON.parse(req.body);
+  const upload = uploadObj.single("avatar");
 
+  upload(req, res, async (err) => {
 
-  let avatar = "public/images/avatars/default.png";
+    if (err) {
+      return sendError(
+        res,
+        errorMessages.invalidMediaType,
+        statusCodes.error.invalidMediaType
+      );
+    }
 
-  // check if image exists
-  if (req.file) {
-    avatar = req.file.destination + req.file.filename;
-  }
+    const newUser = req.body;
 
-  try {
-    const user = await User.create({ ...newUser, avatar });
+    if (typeof (req.body) !== "object") newUser = JSON.parse(req.body);
 
-    return sendResponse(
-      res,
-      createTokenResponse(user),
-      statusCodes.success.created
-    );
-  } catch (error) {
-    return sendError(res, error.message, statusCodes.error.invalidData);
-  };
+    let avatar = "public/images/avatars/default.png";
+
+    // check if image exists
+    if (req.file) {
+      avatar = req.file.destination + req.file.filename;
+    }
+
+    //create user
+    try {
+      const user = await User.create({ ...newUser, avatar });
+      return sendResponse(
+        res,
+        createTokenResponse(user),
+        statusCodes.success.created
+      );
+    } catch (error) {
+
+      // remove the avatar from server
+      deleteFile(avatar);
+
+      return sendError(res, error.message, statusCodes.error.invalidData);
+    };
+
+  });
+
 }
 
 
