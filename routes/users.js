@@ -6,42 +6,37 @@ const passport = require("passport");
 // init router
 const Router = express.Router();
 
+// add auth mdidleware
+Router.use(passport.authenticate("jwt", { session: false }));
+
 /** 
 GET 
 Route: / 
 Results: All Users
 **/
-Router.get("/",
-  [passport.authenticate("jwt", { session: false }),
-  ],
-  usersController.getUsers);
+Router.get("/", isModerator, usersController.getUsers);
 
 /** 
 GET 
-Route: /id 
+Route: /:id 
 Results: get User
 **/
 Router.get("/:id", usersController.getUser);
 
-/** 
-POST 
-Route: / 
-Results: create User
-**/
-Router.post("/", usersController.createUser);
 
 /** 
-PUT
-Route: /id 
-Results: update User
+Patch
+Route: /:id 
+Results: update User role (moderator only)
 **/
-Router.get("/:id", usersController.updateUser);
+Router.patch("/:id", isModerator, usersController.updateUserRole);
 
 /** 
-DELETE 
+Patch
 Route: / 
-Results: delete Users
+Results: update user (current user's data)
 **/
-Router.get("/:id", usersController.deleteUser);
+Router.patch("/", usersController.updateCurrentUser);
+
 
 module.exports = Router;
