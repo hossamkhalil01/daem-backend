@@ -45,8 +45,17 @@ const createComment = async (req, res) => {
   }
 };
 
-const updateComment = (req, res) => {
-  res.send("updateComment works");
+const updateComment = async (req, res) => {
+  try {
+    const updatedComment = await Comment.findOneAndUpdate({_id:req.params.id},req.body,{
+      new: true,
+      runValidators: true
+    });
+    if(!updatedComment) return sendError(res,errorMessages.notFound,statusCodes.error.notFound);
+    return sendResponse(res,updatedComment,statusCodes.success.ok);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
 };
 
 const deleteComment = (req, res) => {
