@@ -45,7 +45,11 @@ PUT
 Route: /id 
 Results: update Ticket
 **/
-Router.patch("/:id", ticketsController.updateTicket);
+Router.patch(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.updateTicket
+);
 
 /** 
 DELETE 

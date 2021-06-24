@@ -57,6 +57,7 @@ const createTicket = async (req, res) => {
       );
     }
     const imagesPaths = req.files.map(({ path }) => path);
+    console.log(req);
     try {
       const newTicket = await Ticket.create({
         ...req.body,
@@ -73,21 +74,41 @@ const createTicket = async (req, res) => {
 
 const updateTicket = async (req, res) => {
   const id = req.params.id;
-  try {
-    const updatedTicket = await Ticket.findOneAndUpdate(
-      { _id: id },
-      req.body.updates,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!updatedTicket)
-      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
-    return sendResponse(res, updatedTicket, statusCodes.success.ok);
-  } catch (error) {
-    return sendError(res, error.message, statusCodes.error.invalidData);
-  }
+  const upload = uploadObject.array("images", 5);
+
+  upload(req, res, async function (err) {
+    if (err) {
+      return sendError(
+        res,
+        errorMessages.invalidMediaType,
+        statusCodes.error.invalidMediaType
+      );
+    }
+    const imagesPaths = req.files.map(({ path }) => path);
+    console.log(req.body);
+    try {
+      const updatedTicket = await Ticket.findOneAndUpdate(
+        { _id: id },
+        {
+          ...req.body,
+          images: imagesPaths,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+      if (!updatedTicket)
+        return sendError(
+          res,
+          errorMessages.notFound,
+          statusCodes.error.notFound
+        );
+      return sendResponse(res, updatedTicket, statusCodes.success.ok);
+    } catch (error) {
+      return sendError(res, error.message, statusCodes.error.invalidData);
+    }
+  });
 };
 
 const deleteTicket = async (req, res) => {
