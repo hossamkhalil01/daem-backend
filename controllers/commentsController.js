@@ -58,8 +58,14 @@ const updateComment = async (req, res) => {
   }
 };
 
-const deleteComment = (req, res) => {
-  res.send("deleteComment works");
+const deleteComment = async (req, res) => {
+  try {
+    const deletedComment = await Comment.findOneAndDelete({_id:req.params.id});
+    if(!deletedComment) return sendError(res,errorMessages.notFound,statusCodes.error.notFound);
+    return sendResponse(res,deletedComment,statusCodes.success.ok);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
 };
 
 module.exports = {
