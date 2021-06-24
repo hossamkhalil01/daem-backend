@@ -6,6 +6,8 @@ const {
   sendResponse,
   errorMessages,
 } = require("../utils/responses");
+const { deleteFile } = require("../utils/fileSystem");
+const uploadObj = require("../middlewares/avatarImageUpload");
 
 
 const getUsers = async (req, res) => {
@@ -14,6 +16,7 @@ const getUsers = async (req, res) => {
 
   // the pagination options
   const options = {
+    select: 'firstname lastname email avatar role',
     sort: { _id: -1 },
     page,
     limit,
@@ -29,26 +32,107 @@ const getUsers = async (req, res) => {
   }
 };
 
-const getUser = (req, res) => {
-  res.send("getUser works");
+const getUser = async (req, res) => {
+
+  const id = req.params.id;
+
+  try {
+    const user = await User.findOne({ _id: id }).select("-password");
+    // user not found
+    if (!user)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+
+    return sendResponse(res, user, statusCodes.success.ok);
+  } catch (error) {
+    return sendError(
+      res,
+      errorMessages.notFound,
+      statusCodes.error.invalidData
+    );
+  }
 };
 
-const createUser = (req, res) => {
-  res.send("createUser works");
+const updateUser = async (res, id, updates) => {
+
+  try {
+    const updatedUser = await User.findOneAndUpdate({ _id: id }, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    // user not found
+    if (!updatedUser)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+
+    // updated
+    return updatedUser;
+
+  } catch (error) {
+    // invalid params
+    return false;
+  }
+}
+
+const updateUserRole = async (req, res) => {
+
+  const id = req.params.id;
+  const updates = { role: req.body.role };
+
+  //update user
+  const updatedUser = await updateUser(res, id, updates);
+
+  if (updatedUser)
+    return sendResponse(res, updatedUser, statusCodes.success.ok);
+
+  // error occured
+  return sendError(res, error.message, statusCodes.error.invalidData);
+
 };
 
-const updateUser = (req, res) => {
-  res.send("updateUser works");
-};
+const updateCurrentUser = async (req, res) => {
 
-const deleteUser = (req, res) => {
-  res.send("deleteUser works");
-};
+  const upload = uploadObj.single("avatar");
+
+  upload(req, res, async (err) => {
+
+    if (err) {
+      return sendError(
+        res,
+        errorMessages.invalidMediaType,
+        statusCodes.error.invalidMediaType
+      );
+    }
+
+    const id = req.user._id;
+    let updates = req.body;
+
+    if (typeof (req.body) !== "object") updates = JSON.parse(req.body);
+
+    // check if image exists
+    if (req.file) {
+      updates.avatar = req.file.destination + req.file.filename;
+    }
+
+    // update user
+    const updatedUser = await updateUser(res, id, updates)
+    if (updatedUser)
+      return sendResponse(res, updatedUser, statusCodes.success.ok);
+
+
+    // error occured
+
+    // delete the image if uploaded
+    updates.avatar ? deleteFile(updates.avatar) : '';
+
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  });
+
+}
+
 
 module.exports = {
   getUsers,
   getUser,
-  createUser,
-  updateUser,
-  deleteUser,
+  updateUserRole,
+  updateCurrentUser
 };

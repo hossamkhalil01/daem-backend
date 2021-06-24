@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  db:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - "27017:27017"
+
+  express-daem-app:
+    build: .
+    image: abdohsn/express-daem-app
+    container_name: daem_app_back
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "8000:8000"
+    links:
+      - db
+    restart: on-failure
+    depends_on:
+      - db
+
+
+  react-daem-app:
+    build:
+      context: ../daem-frontend/
+      dockerfile: Dockerfile
+    image: abdohsn/react-daem-app
+    container_name: daem_app_front
+    volumes:
+      - ../daem-frontend:/app
+    ports:
+      - "80:80"
+    links:
+      - express-daem-app
+    restart: on-failure
+    depends_on:
+      - express-daem-app
+
+volumes:
+  mongodb-data:

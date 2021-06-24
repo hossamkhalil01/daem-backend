@@ -39,6 +39,7 @@ const userSchema = new Schema({
   },
   DOB: {
     type: Date,
+    required: "Date of birth is required",
   },
   role: {
     type: String,
@@ -53,7 +54,7 @@ const userSchema = new Schema({
   },
   diseases: {
     type: String,
-    maxLength: 1000,
+    maxLength: 1000[25, "Diseases description must no exceed 1000 chars"],
     trim: true,
   },
 });
