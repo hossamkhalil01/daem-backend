@@ -57,7 +57,6 @@ const createTicket = async (req, res) => {
       );
     }
     const imagesPaths = req.files.map(({ path }) => path);
-    console.log(req);
     try {
       const newTicket = await Ticket.create({
         ...req.body,
@@ -85,7 +84,6 @@ const updateTicket = async (req, res) => {
       );
     }
     const imagesPaths = req.files.map(({ path }) => path);
-    console.log(req.body);
     try {
       const updatedTicket = await Ticket.findOneAndUpdate(
         { _id: id },
