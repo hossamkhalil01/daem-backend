@@ -52,7 +52,7 @@ const getUser = async (req, res) => {
   }
 };
 
-const updateUser = async (req, res, id, updates) => {
+const updateUser = async (res, id, updates) => {
 
   try {
     const updatedUser = await User.findOneAndUpdate({ _id: id }, updates, {
@@ -65,7 +65,7 @@ const updateUser = async (req, res, id, updates) => {
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
 
     // updated
-    return true;
+    return updatedUser;
 
   } catch (error) {
     // invalid params
@@ -73,13 +73,15 @@ const updateUser = async (req, res, id, updates) => {
   }
 }
 
-const updateUserRole = (req, res) => {
+const updateUserRole = async (req, res) => {
 
   const id = req.params.id;
   const updates = { role: req.body.role };
 
   //update user
-  if (updateUser(req, res, id, updates))
+  const updatedUser = await updateUser(res, id, updates);
+
+  if (updatedUser)
     return sendResponse(res, updatedUser, statusCodes.success.ok);
 
   // error occured
@@ -87,7 +89,7 @@ const updateUserRole = (req, res) => {
 
 };
 
-const updateCurrentUser = (req, res) => {
+const updateCurrentUser = async (req, res) => {
 
   const upload = uploadObj.single("avatar");
 
@@ -112,7 +114,8 @@ const updateCurrentUser = (req, res) => {
     }
 
     // update user
-    if (updateUser(req, res, id, updates))
+    const updatedUser = await updateUser(res, id, updates)
+    if (updatedUser)
       return sendResponse(res, updatedUser, statusCodes.success.ok);
 
 
