@@ -36,8 +36,13 @@ const getComment = async (req, res) => {
   }
 };
 
-const createComment = (req, res) => {
-  res.send("createComment works");
+const createComment = async (req, res) => {
+  try {
+    const comment = await Comment.create(req.body);
+    return sendResponse(res,comment,statusCodes.success.created);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
 };
 
 const updateComment = (req, res) => {
