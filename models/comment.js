@@ -26,4 +26,4 @@ const commentSchema = new Schema(
 // Add pagination plugin
 commentSchema.plugin(mongoosePaginate);
 
-module.export = model("Comment", commentSchema);
+module.exports = model("Comment", commentSchema);
