@@ -26,8 +26,14 @@ const getComments = async (req, res) => {
  }
 };
 
-const getComment = (req, res) => {
-  res.send("getComment works");
+const getComment = async (req, res) => {
+  try {
+    const comment = await Comment.findOne({_id:req.params.id}).populate("author ticket");
+    if(!comment) return sendError(res,errorMessages.notFound,statusCodes.error.notFound);
+    return sendResponse(res,comment,statusCodes.success.ok);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
 };
 
 const createComment = (req, res) => {
