@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -9,7 +8,6 @@ const configs = require("./configs");
 const User = require("./models/user");
 
 const app = express();
-
 
 // get the enviornment configs
 const curr_env = ENV.getVar("NODE_ENV") || "dev";
@@ -40,7 +38,6 @@ app.use("/public", express.static("public/"));
 // auth middleware
 passportUtils.createStrategy(passport);
 app.use(passport.initialize());
-
 
 // add resources routers
 app.use("/auth", require("./routes/auth"));
