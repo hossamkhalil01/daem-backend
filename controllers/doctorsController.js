@@ -5,6 +5,7 @@ const {
   sendResponse,
   errorMessages,
 } = require("../utils/responses");
+const ROLES = require("../utils/roles")
 const { extractPaginationInfo } = require("../utils/pagination");
 
 
@@ -30,6 +31,27 @@ const getDoctors = async (req, res) => {
   }
 };
 
+const getDoctor = async (req, res) => {
+
+  const id = req.params.id;
+
+  try {
+    const doctor = await User.findOne({ _id: id }).select("-diseases -password -email ");
+    // doctor not found
+    if (!doctor || doctor.role !== ROLES.doc)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+
+    return sendResponse(res, doctor, statusCodes.success.ok);
+  } catch (error) {
+    return sendError(
+      res,
+      errorMessages.notFound,
+      statusCodes.error.invalidData
+    );
+  }
+}
+
 module.exports = {
   getDoctors,
+  getDoctor
 };
