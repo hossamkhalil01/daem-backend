@@ -5,6 +5,7 @@ const {
   sendResponse,
   errorMessages,
 } = require("../utils/responses");
+const { extractPaginationInfo } = require("../utils/pagination");
 
 
 const getDoctors = async (req, res) => {
@@ -20,10 +21,10 @@ const getDoctors = async (req, res) => {
   };
 
   try {
-    // get the users
-    const users = await User.paginate({ ...filter, role: "doctor" }, options);
+    // get the doctors
+    const doctors = await User.paginate({ ...filter, role: "doctor" }, options);
     // build the resulting object
-    return sendResponse(res, users, statusCodes.success.ok);
+    return sendResponse(res, doctors, statusCodes.success.ok);
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
   }
