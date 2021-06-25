@@ -8,8 +8,8 @@ const {
 const { extractPaginationInfo } = require("../utils/pagination");
 
 const getComments = async (req, res) => {
-  const ticketId = req.params.ticketId;
   const [{ limit, page }, filter] = extractPaginationInfo(req.query);
+  filter["ticket"] = req.params.ticketId;
   const options = {
     sort: { createdAt: -1 },
     populate: [{ path: "author", select: "firstname lastname avatar" }],
@@ -17,7 +17,7 @@ const getComments = async (req, res) => {
     limit,
   };
   try {
-    const comments = await Comment.paginate({ ticket: ticketId }, options);
+    const comments = await Comment.paginate(filter, options);
     return sendResponse(res, comments, statusCodes.success.ok);
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
