@@ -35,13 +35,13 @@ PUT
 Route: /id 
 Results: update Comment
 **/
-Router.get("/:id", commentsController.updateComment);
+Router.patch("/:id", commentsController.updateComment);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Comment
 **/
-Router.get("/:id", commentsController.deleteComment);
+Router.delete("/:id", commentsController.deleteComment);
 
 module.exports = Router;
