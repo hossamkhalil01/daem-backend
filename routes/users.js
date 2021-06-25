@@ -14,7 +14,7 @@ GET
 Route: / 
 Results: All Users
 **/
-Router.get("/", isModerator, usersController.getUsers);
+Router.get("/", usersController.getUsers);
 
 /** 
 GET 
