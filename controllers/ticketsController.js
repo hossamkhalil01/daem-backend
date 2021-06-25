@@ -56,7 +56,7 @@ const createTicket = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    const imagesPaths = req.files.map(({ path }) => path);
+    const imagesPaths = req.files?.map(({ path }) => path);
     try {
       const newTicket = await Ticket.create({
         ...req.body,
