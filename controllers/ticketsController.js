@@ -23,7 +23,13 @@ const getTickets = async (req, res) => {
 
   try {
     // get the tickets
-    const tickets = await Ticket.paginate(filter, options);
+    let newFilter = filter;
+    if (req.user.role == "user") {
+      newFilter = { ...filter, patient: req.user._id };
+    }
+    const tickets = await Ticket.paginate(newFilter, options);
+    console.log(tickets);
+
     // build the resulting object
     return sendResponse(res, tickets, statusCodes.success.ok);
   } catch (error) {
