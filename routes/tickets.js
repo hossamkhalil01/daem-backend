@@ -18,7 +18,7 @@ Results: All Tickets
 **/
 Router.get(
   "/",
-  [passport.authenticate("jwt", { session: false }), isDoctor],
+  passport.authenticate("jwt", { session: false }),
   ticketsController.getTickets
 );
 
