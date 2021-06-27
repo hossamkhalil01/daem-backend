@@ -16,27 +16,27 @@ GET
 Route: /id 
 Results: get Article
 **/
-Router.get("/:id", articlesController.gettArticle);
+Router.get("/:id", articlesController.getArticle);
 
 /** 
 POST 
 Route: / 
 Results: create Article
 **/
-Router.post("/", articlesController.createtArticle);
+Router.post("/", articlesController.createArticle);
 
 /** 
 PUT
 Route: /id 
 Results: update Article
 **/
-Router.put("/:id", articlesController.updatetArticle);
+Router.put("/:id", articlesController.updateArticle);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Article
 **/
-Router.delete("/:id", articlesController.deletePost);
+Router.delete("/:id", articlesController.deleteArticle);
 
 module.exports = Router;
