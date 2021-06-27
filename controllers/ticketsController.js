@@ -28,7 +28,6 @@ const getTickets = async (req, res) => {
       newFilter = { ...filter, patient: req.user._id };
     }
     const tickets = await Ticket.paginate(newFilter, options);
-    console.log(tickets);
 
     // build the resulting object
     return sendResponse(res, tickets, statusCodes.success.ok);
@@ -79,6 +78,7 @@ const createTicket = async (req, res) => {
 
 const updateTicket = async (req, res) => {
   const id = req.params.id;
+
   const upload = uploadObject.array("images", 5);
 
   upload(req, res, async function (err) {
@@ -89,14 +89,17 @@ const updateTicket = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    const imagesPaths = req.files.map(({ path }) => path);
+    let updates = { ...req.body };
+    if (req.files) {
+      const imagesPaths = req.files.map(({ path }) => path);
+      updates.images = imagesPaths;
+    }
+
     try {
       const updatedTicket = await Ticket.findOneAndUpdate(
         { _id: id },
-        {
-          ...req.body,
-          images: imagesPaths,
-        },
+
+        updates,
         {
           new: true,
           runValidators: true,
