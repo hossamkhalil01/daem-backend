@@ -1,7 +1,7 @@
 const { model, Schema } = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const postSchema = new Schema(
+const articleSchema = new Schema(
   {
     author: {
       type: Schema.Types.ObjectId,
@@ -21,6 +21,7 @@ const postSchema = new Schema(
     },
     image: {
       type: String,
+      required: true
     },
   },
   { timestamps: true }
@@ -28,6 +29,5 @@ const postSchema = new Schema(
 
 
 // Add pagination plugin
-postSchema.plugin(mongoosePaginate);
-
-module.exports = model("Post", postSchema);
+articleSchema.plugin(mongoosePaginate);
+module.exports = model("Article", articleSchema);
