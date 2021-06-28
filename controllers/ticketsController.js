@@ -29,7 +29,6 @@ const getTickets = async (req, res) => {
       newFilter = { ...filter, patient: req.user._id };
     }
     const tickets = await Ticket.paginate(newFilter, options);
-    console.log(tickets);
 
     // build the resulting object
     return sendResponse(res, tickets, statusCodes.success.ok);
