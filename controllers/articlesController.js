@@ -6,7 +6,7 @@ const {
   errorMessages,
 } = require("../utils/responses");
 const { extractPaginationInfo } = require("../utils/pagination");
-const uploadObject = require("../middlewares/ticketImagesUpload");
+const uploadObject = require("../middlewares/articleImageUpload");
 const { deleteFile } = require("../utils/fileSystem");
 
 const getArticles = async (req, res) => {
@@ -49,15 +49,18 @@ const createArticle = async (req, res) => {
       );
     }
     let newArticle = req.body;
+    newArticle.image = "public/images/articles/default.jpeg";
+
     if (typeof req.body !== "object") newArticle = JSON.parse(req.body);
-    newArticle.image = req.file.destination + req.file.filename;
+    if (req.file) {
+      newArticle.image = req.file.destination + req.file.filename;
+    }
     try {
-      const article = await Article.create({ ...newArticle });
-      return sendResponse(
-        res,
-        createTokenResponse(article),
-        statusCodes.success.created
-      );
+      const article = await Article.create({
+        ...newArticle,
+        author: req.user._id,
+      });
+      return sendResponse(res, newArticle, statusCodes.success.created);
     } catch (error) {
       newArticle.image ? deleteFile(newArticle.image) : "";
       return sendError(res, error.message, statusCodes.error.invalidData);
@@ -66,7 +69,7 @@ const createArticle = async (req, res) => {
 };
 
 const updateArticle = async (req, res) => {
-  const upload = uploadObj.single("image");
+  const upload = uploadObject.single("image");
   const id = req.params.id;
   upload(req, res, async (err) => {
     if (err) {
@@ -82,10 +85,14 @@ const updateArticle = async (req, res) => {
     if (req.file) {
       updates.image = req.file.destination + req.file.filename;
     }
-    const updatedArticle = await Ticket.findOneAndUpdate({ _id: id }, updates, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedArticle = await Article.findOneAndUpdate(
+      { _id: id },
+      updates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (updatedArticle)
       return sendResponse(res, updatedArticle, statusCodes.success.ok);
     updates.image ? deleteFile(updates.image) : "";

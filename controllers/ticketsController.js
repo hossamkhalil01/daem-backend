@@ -8,6 +8,7 @@ const {
 } = require("../utils/responses");
 
 const uploadObject = require("../middlewares/ticketImagesUpload");
+const { deleteFile } = require("../utils/fileSystem");
 
 const getTickets = async (req, res) => {
   // process the query params
@@ -69,9 +70,11 @@ const createTicket = async (req, res) => {
         patient: req.user._id,
         images: imagesPaths,
       });
-
       return sendResponse(res, newTicket, statusCodes.success.created);
     } catch (error) {
+      imagesPaths.forEach((element) => {
+        deleteFile(element);
+      });
       return sendError(res, error.message, statusCodes.error.invalidData);
     }
   });
