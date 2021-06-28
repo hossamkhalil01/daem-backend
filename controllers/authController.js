@@ -80,6 +80,17 @@ const register = async (req, res) => {
   });
 };
 
+
+const getAuthUser = async (req, res) => {
+
+
+  const user = req.user;
+  delete user.password;
+
+  // return the user
+  return sendResponse(res, user, statusCodes.success.ok);
+}
+
 // create user token and return the response
 const createTokenResponse = (user) => {
   const jwt = jwtUtils.issueJWT(user);
@@ -90,4 +101,4 @@ const createTokenResponse = (user) => {
   return { user, token: jwt.token, expiresIn: jwt.expiresIn };
 };
 
-module.exports = { login, register };
+module.exports = { login, register, getAuthUser };
