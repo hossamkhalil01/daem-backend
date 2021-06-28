@@ -15,7 +15,7 @@ const login = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     // user not found
     if (!user)
-      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+      return sendError(res, errorMessages.invalidAuth, statusCodes.error.unAuthenticated);
 
     const isCorrectPassword = await bcrypt.compare(
       req.body.password,
@@ -26,7 +26,7 @@ const login = async (req, res) => {
       return sendError(
         res,
         errorMessages.invalidAuth,
-        statusCodes.error.invalidData
+        statusCodes.error.unAuthenticated
       );
     }
 
@@ -35,7 +35,7 @@ const login = async (req, res) => {
     return sendError(
       res,
       errorMessages.invalidAuth,
-      statusCodes.error.invalidData
+      statusCodes.error.unAuthenticated
     );
   }
 };
