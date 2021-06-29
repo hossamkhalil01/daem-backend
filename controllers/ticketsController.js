@@ -81,6 +81,7 @@ const createTicket = async (req, res) => {
 
 const updateTicket = async (req, res) => {
   const id = req.params.id;
+
   const upload = uploadObject.array("images", 5);
 
   upload(req, res, async function (err) {
