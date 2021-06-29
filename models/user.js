@@ -9,6 +9,8 @@ const userSchema = new Schema({
     trim: true,
     minLength: [3, "First name must be at least 3 chars"],
     maxLength: [25, "First name must not exceed 25 chars"],
+    lowercase: true,
+
   },
   lastname: {
     type: String,
@@ -16,6 +18,8 @@ const userSchema = new Schema({
     trim: true,
     minLength: [3, "Last name must be at least 3 chars"],
     maxLength: [25, "Last name must not exceed 25 chars"],
+    lowercase: true,
+
   },
   email: {
     type: String,

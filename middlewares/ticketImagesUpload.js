@@ -1,20 +1,21 @@
 const multer = require("multer");
-const fs = require("fs");
+const { makeDir } = require("../utils/fileSystem");
 const imageFilter = require("./imagesFilter");
 
-// Set The Storage Engine
+// save images to public folder using multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const path = "public/images/avatars/";
+    const id = req.user._id;
+    const path = `public/images/tickets/${id}`;
+    makeDir(path);
     cb(null, path);
   },
   filename: (req, file, cb) => {
     const fileName = file.originalname.toLowerCase().split(" ").join("-");
-    cb(null, Date.now() + "-avatar-" + fileName);
+    cb(null, Date.now() + "-ticket-" + fileName);
   },
 });
 
-// Init Upload
 const upload = multer({
   storage: storage,
   fileFilter: imageFilter,

@@ -11,4 +11,13 @@ Results: get All doctors
 **/
 Router.get("/", doctorsController.getDoctors);
 
+
+/** 
+GET 
+Route: / 
+Results: get  doctor
+**/
+Router.get("/:id", doctorsController.getDoctor);
+
+
 module.exports = Router;

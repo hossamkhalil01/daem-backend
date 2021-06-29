@@ -7,6 +7,7 @@ const passport = require("passport");
 const Router = express.Router();
 
 const commentsRouter = require("./comments");
+const upload = require("../middlewares/ticketImagesUpload");
 
 Router.use("/:ticketId/comments", commentsRouter);
 
@@ -17,7 +18,7 @@ Results: All Tickets
 **/
 Router.get(
   "/",
-  [passport.authenticate("jwt", { session: false }), isDoctor],
+  passport.authenticate("jwt", { session: false }),
   ticketsController.getTickets
 );
 
@@ -33,28 +34,43 @@ Ticket
 Route: / 
 Results: create Ticket
 **/
-Router.post("/", ticketsController.createTicket);
+Router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.createTicket
+);
 
-/** 
+/**
 PUT
 Route: /id 
 Results: update Ticket
 **/
-Router.patch("/:id", ticketsController.updateTicket);
+Router.patch(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.updateTicket
+);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Tickets
 **/
-Router.delete("/:id", ticketsController.deleteTicket);
+Router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.deleteTicket
+);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Tickets
 **/
-Router.delete("/:id/remove-doctor", ticketsController.removeTicketDoctor);
-
+Router.delete(
+  "/:id/remove-doctor",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.removeTicketDoctor
+);
 
 module.exports = Router;

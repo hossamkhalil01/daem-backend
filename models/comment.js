@@ -7,10 +7,12 @@ const commentSchema = new Schema(
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     ticket: {
       type: Schema.Types.ObjectId,
       ref: "Ticket",
+      required: true,
     },
     body: {
       type: String,
@@ -26,4 +28,4 @@ const commentSchema = new Schema(
 // Add pagination plugin
 commentSchema.plugin(mongoosePaginate);
 
-module.export = model("Comment", commentSchema);
+module.exports = model("Comment", commentSchema);
