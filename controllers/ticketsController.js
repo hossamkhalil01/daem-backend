@@ -8,6 +8,7 @@ const {
 } = require("../utils/responses");
 
 const uploadObject = require("../middlewares/ticketImagesUpload");
+const { deleteFile } = require("../utils/fileSystem");
 
 const getTickets = async (req, res) => {
   // process the query params
@@ -61,16 +62,18 @@ const createTicket = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    const imagesPaths = req.files?.map(({ path }) => path);
+    const newData = { ...req.body, patient: req.user._id, images: [] };
+    if (req.files) {
+      const imagesPaths = req.files.map(({ path }) => path);
+      newData.images = imagesPaths;
+    }
     try {
-      const newTicket = await Ticket.create({
-        ...req.body,
-        patient: req.user._id,
-        images: imagesPaths,
-      });
-
+      const newTicket = await Ticket.create(newData);
       return sendResponse(res, newTicket, statusCodes.success.created);
     } catch (error) {
+      imagesPaths.forEach((element) => {
+        deleteFile(element);
+      });
       return sendError(res, error.message, statusCodes.error.invalidData);
     }
   });
@@ -89,7 +92,7 @@ const updateTicket = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    let updates = { ...req.body };
+    const updates = { ...req.body };
     if (req.files) {
       const imagesPaths = req.files.map(({ path }) => path);
       updates.images = imagesPaths;
@@ -98,7 +101,6 @@ const updateTicket = async (req, res) => {
     try {
       const updatedTicket = await Ticket.findOneAndUpdate(
         { _id: id },
-
         updates,
         {
           new: true,

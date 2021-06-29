@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const articlesController = require("../controllers/articlesController");
 
 // init router
@@ -23,20 +24,32 @@ POST
 Route: / 
 Results: create Article
 **/
-Router.post("/", articlesController.createArticle);
+Router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  articlesController.createArticle
+);
 
 /** 
 PUT
 Route: /id 
 Results: update Article
 **/
-Router.put("/:id", articlesController.updateArticle);
+Router.patch(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  articlesController.updateArticle
+);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Article
 **/
-Router.delete("/:id", articlesController.deleteArticle);
+Router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  articlesController.deleteArticle
+);
 
 module.exports = Router;

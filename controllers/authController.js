@@ -15,7 +15,7 @@ const login = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     // user not found
     if (!user)
-      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+      return sendError(res, errorMessages.invalidAuth, statusCodes.error.unAuthenticated);
 
     const isCorrectPassword = await bcrypt.compare(
       req.body.password,
@@ -26,7 +26,7 @@ const login = async (req, res) => {
       return sendError(
         res,
         errorMessages.invalidAuth,
-        statusCodes.error.invalidData
+        statusCodes.error.unAuthenticated
       );
     }
 
@@ -35,7 +35,7 @@ const login = async (req, res) => {
     return sendError(
       res,
       errorMessages.invalidAuth,
-      statusCodes.error.invalidData
+      statusCodes.error.unAuthenticated
     );
   }
 };
@@ -80,6 +80,17 @@ const register = async (req, res) => {
   });
 };
 
+
+const getAuthUser = async (req, res) => {
+
+
+  const user = req.user;
+  delete user.password;
+
+  // return the user
+  return sendResponse(res, user, statusCodes.success.ok);
+}
+
 // create user token and return the response
 const createTokenResponse = (user) => {
   const jwt = jwtUtils.issueJWT(user);
@@ -90,4 +101,4 @@ const createTokenResponse = (user) => {
   return { user, token: jwt.token, expiresIn: jwt.expiresIn };
 };
 
-module.exports = { login, register };
+module.exports = { login, register, getAuthUser };

@@ -56,13 +56,21 @@ DELETE
 Route: / 
 Results: delete Tickets
 **/
-Router.delete("/:id", ticketsController.deleteTicket);
+Router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.deleteTicket
+);
 
 /** 
 DELETE 
 Route: / 
 Results: delete Tickets
 **/
-Router.delete("/:id/remove-doctor", ticketsController.removeTicketDoctor);
+Router.delete(
+  "/:id/remove-doctor",
+  passport.authenticate("jwt", { session: false }),
+  ticketsController.removeTicketDoctor
+);
 
 module.exports = Router;
