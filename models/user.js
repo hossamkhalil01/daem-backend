@@ -1,6 +1,6 @@
 const { model, Schema } = require("mongoose");
 const passwordHash = require("../middlewares/passwordHash");
-const mongoosePaginate = require('mongoose-paginate-v2');
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const userSchema = new Schema({
   firstname: {
@@ -10,7 +10,6 @@ const userSchema = new Schema({
     minLength: [3, "First name must be at least 3 chars"],
     maxLength: [25, "First name must not exceed 25 chars"],
     lowercase: true,
-
   },
   lastname: {
     type: String,
@@ -19,7 +18,6 @@ const userSchema = new Schema({
     minLength: [3, "Last name must be at least 3 chars"],
     maxLength: [25, "Last name must not exceed 25 chars"],
     lowercase: true,
-
   },
   email: {
     type: String,
@@ -58,7 +56,7 @@ const userSchema = new Schema({
   },
   diseases: {
     type: String,
-    maxLength: 1000[25, "Diseases description must no exceed 1000 chars"],
+    maxLength: (1000)[(25, "Diseases description must no exceed 1000 chars")],
     trim: true,
   },
 });
