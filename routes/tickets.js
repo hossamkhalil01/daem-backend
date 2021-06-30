@@ -1,6 +1,11 @@
 const express = require("express");
 const ticketsController = require("../controllers/ticketsController");
-const { isDoctor } = require("../middlewares/authorization");
+const {
+  isDoctor,
+  isModerator,
+  isUser,
+  isDoctorOrModerator,
+} = require("../middlewares/authorization");
 const passport = require("passport");
 
 // init router
@@ -43,13 +48,46 @@ Router.post(
 /**
 PUT
 Route: /id 
-Results: update Ticket
+Results: user update Ticket
 **/
 Router.patch(
-  "/:id",
-  passport.authenticate("jwt", { session: false }),
-  ticketsController.updateTicket
+  "/user/:id",
+  [passport.authenticate("jwt", { session: false }), isUser],
+  ticketsController.userUpdateTicket
 );
+
+/**
+PUT
+Route: /id 
+Results: doctor update Ticket
+**/
+Router.patch(
+  "/doctor/:id",
+  [passport.authenticate("jwt", { session: false }), isDoctorOrModerator],
+  ticketsController.doctorUpdateTicket
+);
+
+/**
+PUT
+Route: /id 
+Results: moderator update Ticket
+**/
+Router.patch(
+  "/moderator/:id",
+  [passport.authenticate("jwt", { session: false }), isModerator],
+  ticketsController.moderatorUpdateTicket
+);
+
+/**
+PUT
+Route: /id 
+Results: update Ticket
+**/
+// Router.patch(
+//   "/:id",
+//   passport.authenticate("jwt", { session: false }),
+//   ticketsController.updateTicket
+// );
 
 /** 
 DELETE 
@@ -58,7 +96,7 @@ Results: delete Tickets
 **/
 Router.delete(
   "/:id",
-  passport.authenticate("jwt", { session: false }),
+  [passport.authenticate("jwt", { session: false }), isModerator],
   ticketsController.deleteTicket
 );
 
