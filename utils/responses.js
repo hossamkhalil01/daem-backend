@@ -28,6 +28,7 @@ const errorMessages = {
   unAuthorized: "You don't have access to this resource",
   invalidAuth: "Invalid email or password.",
   invalidMediaType: "Only .png, .jpg and .jpeg format allowed",
+  exceededLimit: "exceeded-limit"
 };
 
 module.exports = { errorMessages, sendError, sendResponse, statusCodes };
