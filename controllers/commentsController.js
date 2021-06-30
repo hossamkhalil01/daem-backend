@@ -39,7 +39,8 @@ const getComment = async (req, res) => {
 
 const createComment = async (req, res) => {
   try {
-    const comment = await Comment.create(req.body);
+    let comment = await Comment.create(req.body);
+    comment = await comment.populate("author","firstname lastname avatar").execPopulate();
     return sendResponse(res, comment, statusCodes.success.created);
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);

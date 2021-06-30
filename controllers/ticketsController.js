@@ -9,6 +9,7 @@ const {
 
 const uploadObject = require("../middlewares/ticketImagesUpload");
 const { deleteFile } = require("../utils/fileSystem");
+const MAX_TICKETS_PER_DAY = 1;
 
 const getTickets = async (req, res) => {
   // process the query params
@@ -66,6 +67,12 @@ const createTicket = async (req, res) => {
     if (req.files) {
       const imagesPaths = req.files.map(({ path }) => path);
       newData.images = imagesPaths;
+    }
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const ticketsCreatedToday= await Ticket.find({createdAt: {$gte: today},patient: req.user._id});
+    if(ticketsCreatedToday.length === MAX_TICKETS_PER_DAY){
+      return sendResponse(res, errorMessages.exceededLimit, statusCodes.error.unAuthorized);
     }
     try {
       const newTicket = await Ticket.create(newData);
