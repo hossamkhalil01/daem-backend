@@ -2,6 +2,19 @@ const { model, Schema } = require("mongoose");
 const passwordHash = require("../middlewares/passwordHash");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
+
+const doctorInfoSchema = new Schema({
+  speciality: {
+    type: String,
+    trim: true,
+  },
+
+  about: {
+    type: String,
+    trim: true,
+  },
+});
+
 const userSchema = new Schema({
   firstname: {
     type: String,
@@ -54,12 +67,16 @@ const userSchema = new Schema({
     required: "Gender is required",
     enum: ["male", "female"],
   },
+
+  doctorInfo: doctorInfoSchema,
+
   diseases: {
     type: String,
     maxLength: (1000)[(25, "Diseases description must no exceed 1000 chars")],
     trim: true,
   },
 });
+
 
 userSchema.virtual("age").get(function () {
   return Math.floor(
