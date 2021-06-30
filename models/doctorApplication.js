@@ -4,6 +4,12 @@ const SPECIALITIES_LIST = require("../utils/specialities");
 
 const doctorApplicationSchema = new Schema({
 
+  status: {
+    type: String,
+    enum: ["pending", "accepted", "rejected"],
+    default: "pending",
+  },
+
   applicant: {
     type: Schema.Types.ObjectId,
     ref: "User",

@@ -8,7 +8,7 @@ const {
 } = require("../utils/responses");
 
 const uploadObject = require("../middlewares/uploads/applicationImagesUpload");
-const { deleteFile } = require("../utils/fileSystem");
+const { removeDir } = require("../utils/fileSystem");
 
 
 const getAllApplications = async (req, res) => {
@@ -50,6 +50,41 @@ const getApplication = async (req, res) => {
 
 const createApplication = async (req, res) => {
 
+  const upload = uploadObject.fields([{
+    name: 'nationalId', maxCount: 1
+  }, {
+    name: 'doctorId', maxCount: 1
+  }]);
+
+  upload(req, res, async function (err) {
+    if (err) {
+      return sendError(
+        res,
+        errorMessages.invalidMediaType,
+        statusCodes.error.invalidMediaType
+      );
+    }
+    // catch the images
+    const nationalId = req.files.nationalId[0];
+    const doctorId = req.files.doctorId[0];
+
+    const newData = {
+      ...req.body, applicant: req.user._id,
+      nationalId: nationalId.path,
+      doctorId: doctorId.path,
+    };
+
+    try {
+      const newApplication = await Application.create(newData);
+      return sendResponse(res, newApplication, statusCodes.success.created);
+    } catch (error) {
+
+      // remove the application images dir
+      removeDir(nationalId.path);
+
+      return sendError(res, error.message, statusCodes.error.invalidData);
+    }
+  });
 }
 
 const approveApplication = async (req, res) => {
