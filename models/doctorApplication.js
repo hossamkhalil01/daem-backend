@@ -1,12 +1,15 @@
 const { model, Schema } = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate-v2');
 const SPECIALITIES_LIST = require("../utils/specialities");
+
 const doctorApplicationSchema = new Schema({
 
   applicant: {
     type: Schema.Types.ObjectId,
+    ref: "User",
     required: "Applicant is required",
     default: null,
+    unique: true
   },
 
   speciality: {
