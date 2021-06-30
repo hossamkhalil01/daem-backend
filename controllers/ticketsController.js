@@ -62,13 +62,13 @@ const createTicket = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    const imagesPaths = req.files?.map(({ path }) => path);
+    const newData = { ...req.body, patient: req.user._id, images: [] };
+    if (req.files) {
+      const imagesPaths = req.files.map(({ path }) => path);
+      newData.images = imagesPaths;
+    }
     try {
-      const newTicket = await Ticket.create({
-        ...req.body,
-        patient: req.user._id,
-        images: imagesPaths,
-      });
+      const newTicket = await Ticket.create(newData);
       return sendResponse(res, newTicket, statusCodes.success.created);
     } catch (error) {
       imagesPaths.forEach((element) => {
@@ -81,6 +81,7 @@ const createTicket = async (req, res) => {
 
 const updateTicket = async (req, res) => {
   const id = req.params.id;
+
   const upload = uploadObject.array("images", 5);
 
   upload(req, res, async function (err) {
@@ -91,14 +92,16 @@ const updateTicket = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    const imagesPaths = req.files.map(({ path }) => path);
+    const updates = { ...req.body };
+    if (req.files) {
+      const imagesPaths = req.files.map(({ path }) => path);
+      updates.images = imagesPaths;
+    }
+
     try {
       const updatedTicket = await Ticket.findOneAndUpdate(
         { _id: id },
-        {
-          ...req.body,
-          images: imagesPaths,
-        },
+        updates,
         {
           new: true,
           runValidators: true,

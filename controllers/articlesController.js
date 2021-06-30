@@ -11,6 +11,16 @@ const { deleteFile } = require("../utils/fileSystem");
 
 const getArticles = async (req, res) => {
   const [{ limit, page }, filter] = extractPaginationInfo(req.query);
+
+  // search query exists
+  if (filter.q) {
+    // constrcut searching object
+    filter.title = { $regex: new RegExp(filter.q), $options: "i" };
+  }
+
+  // delete the key
+  delete filter.q;
+
   const options = {
     sort: { createdAt: -1 },
     populate: [{ path: "author", select: "firstname lastname avatar role" }],
@@ -60,7 +70,7 @@ const createArticle = async (req, res) => {
         ...newArticle,
         author: req.user._id,
       });
-      return sendResponse(res, newArticle, statusCodes.success.created);
+      return sendResponse(res, article, statusCodes.success.created);
     } catch (error) {
       newArticle.image ? deleteFile(newArticle.image) : "";
       return sendError(res, error.message, statusCodes.error.invalidData);
