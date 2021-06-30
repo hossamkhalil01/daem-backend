@@ -12,7 +12,7 @@ const passport = require("passport");
 const Router = express.Router();
 
 const commentsRouter = require("./comments");
-const upload = require("../middlewares/ticketImagesUpload");
+const upload = require("../middlewares/uploads/ticketImagesUpload");
 
 Router.use("/:ticketId/comments", commentsRouter);
 

@@ -7,7 +7,7 @@ const {
   errorMessages,
 } = require("../utils/responses");
 const { deleteFile } = require("../utils/fileSystem");
-const uploadObj = require("../middlewares/avatarImageUpload");
+const uploadObj = require("../middlewares/uploads/avatarImageUpload");
 
 const getUsers = async (req, res) => {
   // process the query params

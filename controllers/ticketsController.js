@@ -7,7 +7,7 @@ const {
   errorMessages,
 } = require("../utils/responses");
 
-const uploadObject = require("../middlewares/ticketImagesUpload");
+const uploadObject = require("../middlewares/uploads/ticketImagesUpload");
 const { deleteFile } = require("../utils/fileSystem");
 
 const getTickets = async (req, res) => {
