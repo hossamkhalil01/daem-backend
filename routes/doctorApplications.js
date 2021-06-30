@@ -25,7 +25,7 @@ Router.get("/", isModerator, applicationController.getAllApplications);
 /** 
 GET 
 Route: /id 
-Results: Get Applications
+Results: Get Any application (moderators only)
 **/
 Router.get("/:id", isModerator, applicationController.getApplication);
 
