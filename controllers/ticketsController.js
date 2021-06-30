@@ -11,9 +11,32 @@ const uploadObject = require("../middlewares/ticketImagesUpload");
 const { deleteFile } = require("../utils/fileSystem");
 const MAX_TICKETS_PER_DAY = 1;
 
+const manipulateSearchParams = (filter) => {
+  if (filter.from && filter.to) {
+    filter["createdAt"] = {
+      $gte: new Date(filter.from),
+      $lte: new Date(filter.to),
+    };
+    delete filter.from;
+    delete filter.to;
+  } else if (filter.from) {
+    filter["createdAt"] = { $gte: new Date(filter.from) };
+    delete filter.from;
+  } else if (filter.to) {
+    filter["createdAt"] = { $lte: new Date(filter.to) };
+    delete filter.to;
+  }
+
+  return filter;
+};
+
 const getTickets = async (req, res) => {
   // process the query params
-  const [{ limit, page }, filter] = extractPaginationInfo(req.query);
+  let [{ limit, page }, filter] = extractPaginationInfo(req.query);
+
+  if (filter) {
+    filter = manipulateSearchParams(filter);
+  }
 
   // the pagination options
   const options = {
@@ -70,9 +93,16 @@ const createTicket = async (req, res) => {
     }
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const ticketsCreatedToday= await Ticket.find({createdAt: {$gte: today},patient: req.user._id});
-    if(ticketsCreatedToday.length === MAX_TICKETS_PER_DAY){
-      return sendResponse(res, errorMessages.exceededLimit, statusCodes.error.unAuthorized);
+    const ticketsCreatedToday = await Ticket.find({
+      createdAt: { $gte: today },
+      patient: req.user._id,
+    });
+    if (ticketsCreatedToday.length === MAX_TICKETS_PER_DAY) {
+      return sendResponse(
+        res,
+        errorMessages.exceededLimit,
+        statusCodes.error.unAuthorized
+      );
     }
     try {
       const newTicket = await Ticket.create(newData);
