@@ -49,19 +49,19 @@ Results: Approve the application
 Router.post(
   "/:id/approve",
   isModerator,
-  articlesController.approveApplication
+  applicationController.approveApplication
 );
 
 
 /** 
 PUT
 Route: /:id/decline
-Results: Decline the application
+Results: Reject the application
 **/
 Router.post(
-  "/:id/decline",
+  "/:id/reject",
   isModerator,
-  articlesController.declineApplication
+  applicationController.rejectApplication
 );
 
 
