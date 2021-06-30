@@ -15,6 +15,7 @@ const Router = express.Router();
 Router.use(passport.authenticate("jwt", { session: false }));
 
 
+
 /** 
 GET 
 Route: / 
@@ -22,12 +23,23 @@ Results: All Applications
 **/
 Router.get("/", isModerator, applicationController.getAllApplications);
 
+
+/** 
+GET 
+Route: /specialities
+Results: All Available Specialities
+**/
+Router.get("/specialities", applicationController.getSpecialities);
+
+
+
 /** 
 GET 
 Route: /id 
 Results: Get Any application (moderators only)
 **/
 Router.get("/:id", isModerator, applicationController.getApplication);
+
 
 /** 
 POST 

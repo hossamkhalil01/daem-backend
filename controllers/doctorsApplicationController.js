@@ -12,7 +12,7 @@ const {
 
 const uploadObject = require("../middlewares/uploads/applicationImagesUpload");
 const { removeDir } = require("../utils/fileSystem");
-
+const SPECIALITIES_LIST = require("../utils/specialities");
 
 const removeApplicationImagesDir = (userId) => {
 
@@ -21,6 +21,10 @@ const removeApplicationImagesDir = (userId) => {
   // remove the application images dir
   return removeDir(APP_IMAGES_BASE + userId);
 };
+
+const getSpecialities = (req, res) => {
+  return sendResponse(res, SPECIALITIES_LIST, statusCodes.success.ok);
+}
 
 const getAllApplications = async (req, res) => {
   // process the query params
@@ -119,7 +123,7 @@ const updateApplicationStatus = async (res, applicationId, newStatus) => {
   }
 }
 
-const userToDoctor(application) = async (application, res) => {
+const userToDoctor = async (application, res) => {
 
   // construct doctor info object
   const doctorInfo = {
@@ -199,4 +203,5 @@ module.exports = {
   createApplication,
   approveApplication,
   rejectApplication,
+  getSpecialities
 };
