@@ -11,6 +11,16 @@ const authorize = (userRole, role, res, next) => {
   return next();
 };
 
+const authorizeDoctorModerator = (userRole, roles, res, next) => {
+  if (!roles.includes(userRole))
+    return sendError(
+      res,
+      errorMessages.unAuthorized,
+      statusCodes.error.unAuthorized
+    );
+  return next();
+};
+
 const isModerator = (req, res, next) =>
   authorize(req.user.role, ROLES.mod, res, next);
 
@@ -20,4 +30,7 @@ const isDoctor = (req, res, next) =>
 const isUser = (req, res, next) =>
   authorize(req.user.role, ROLES.user, res, next);
 
-module.exports = { isModerator, isDoctor, isUser };
+const isDoctorOrModerator = (req, res, next) =>
+  authorizeDoctorModerator(req.user.role, [ROLES.doc, ROLES.mod], res, next);
+
+module.exports = { isModerator, isDoctor, isUser, isDoctorOrModerator };
