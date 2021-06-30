@@ -1,4 +1,7 @@
 const Application = require("../models/doctorApplication");
+const User = require("../models/user");
+const ROLES = require("../utils/roles");
+
 const { extractPaginationInfo } = require("../utils/pagination");
 const {
   statusCodes,
@@ -10,12 +13,13 @@ const {
 const uploadObject = require("../middlewares/uploads/applicationImagesUpload");
 const { removeDir } = require("../utils/fileSystem");
 
-const APP_IMAGES_BASE = "public/images/doctor_applications/";
 
+const removeApplicationImagesDir = (userId) => {
 
-const removeApplicationImagesDir = async (userId) => {
+  const APP_IMAGES_BASE = "public/images/doctor_applications/";
+
   // remove the application images dir
-  return removeDir(`APP_IMAGES_BASE+${userId}`);
+  return removeDir(APP_IMAGES_BASE + userId);
 };
 
 const getAllApplications = async (req, res) => {
@@ -108,10 +112,43 @@ const updateApplicationStatus = async (res, applicationId, newStatus) => {
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
 
     // updated
-    return updatedApplication;
+    return { updatedApplication, error: false };
   } catch (error) {
     // invalid params
-    return false;
+    return { updatedApplication: {}, error };
+  }
+}
+
+const userToDoctor(application) = async (application, res) => {
+
+  // construct doctor info object
+  const doctorInfo = {
+    speciality: application.speciality,
+    about: application.about,
+  };
+
+  // construct updates object
+  const updates = {
+    doctorInfo,
+    role: ROLES.doc,
+  }
+
+  try {
+    const updatedUser = await User.findOneAndUpdate({ _id: application.applicant }, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    // user not found
+    if (!updatedUser)
+      return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
+
+    // updated
+    return { updatedUser, error: false };
+
+  } catch (error) {
+    // invalid params
+    return { updatedUser: {}, error };
   }
 }
 
@@ -120,13 +157,20 @@ const approveApplication = async (req, res) => {
 
 
   //update application
-  const updatedApplication = await updateApplicationStatus(res, id, "approved");
-
-  if (updatedApplication)
-    return sendResponse(res, updatedApplication, statusCodes.success.ok);
+  const { updatedApplication, error } = await updateApplicationStatus(res, id, "approved");
 
   // error occured
-  return sendError(res, error.message, statusCodes.error.invalidData);
+  if (error)
+    return sendError(res, error.message, statusCodes.error.invalidData);
+
+
+  // change user to doctor
+  const updatedUser = userToDoctor(updatedApplication, res);
+
+  if (!error)
+    return sendResponse(res, updatedApplication, statusCodes.success.ok);
+
+  return sendError(res, error.message, statusCodes.error.serverError);
 }
 
 const rejectApplication = async (req, res) => {
@@ -146,7 +190,6 @@ const rejectApplication = async (req, res) => {
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
   }
-
 }
 
 
