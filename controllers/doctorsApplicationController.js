@@ -65,11 +65,7 @@ const getApplication = async (req, res) => {
 
 const createApplication = async (req, res) => {
 
-  const upload = uploadObject.fields([{
-    name: 'nationalId', maxCount: 1
-  }, {
-    name: 'doctorId', maxCount: 1
-  }]);
+  const upload = uploadObject.array("images", 2);
 
   upload(req, res, async function (err) {
     if (err) {
@@ -79,21 +75,25 @@ const createApplication = async (req, res) => {
         statusCodes.error.invalidMediaType
       );
     }
-    // catch the images
-    const nationalId = req.files.nationalId[0];
-    const doctorId = req.files.doctorId[0];
+
+    const { about, speciality } = req.body;
 
     const newData = {
-      ...req.body, applicant: req.user._id,
-      nationalId: nationalId.path,
-      doctorId: doctorId.path,
+      about, speciality, applicant: req.user._id,
     };
+
+    if (req.files) {
+      const nationalId = req.files[0];
+      const doctorId = req.files[1];
+
+      nationalId ? newData.nationalId = nationalId.path : '';
+      doctorId ? newData.doctorId = doctorId.path : '';
+    }
 
     try {
       const newApplication = await Application.create(newData);
       return sendResponse(res, newApplication, statusCodes.success.created);
     } catch (error) {
-
       // remove the application images dir
       removeApplicationImagesDir(req.user._id);
 
