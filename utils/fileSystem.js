@@ -13,7 +13,13 @@ const makeDir = (path) => {
   return fs.mkdirSync(path, { recursive: true });
 };
 
+const removeDir = (path) => {
+  return fs.rmdirSync(path, { recursive: true });
+
+}
+
 module.exports = {
   deleteFile,
   makeDir,
+  removeDir,
 };

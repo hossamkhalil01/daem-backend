@@ -6,7 +6,7 @@ const {
   errorMessages,
 } = require("../utils/responses");
 const { extractPaginationInfo } = require("../utils/pagination");
-const uploadObject = require("../middlewares/articleImageUpload");
+const uploadObject = require("../middlewares/uploads/articleImageUpload");
 const { deleteFile } = require("../utils/fileSystem");
 
 const getArticles = async (req, res) => {

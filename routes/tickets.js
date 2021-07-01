@@ -12,7 +12,6 @@ const passport = require("passport");
 const Router = express.Router();
 
 const commentsRouter = require("./comments");
-const upload = require("../middlewares/ticketImagesUpload");
 
 Router.use("/:ticketId/comments", commentsRouter);
 
@@ -77,17 +76,7 @@ Router.patch(
   [passport.authenticate("jwt", { session: false }), isModerator],
   ticketsController.moderatorUpdateTicket
 );
-
-/**
-PUT
-Route: /id 
-Results: update Ticket
-**/
-// Router.patch(
-//   "/:id",
-//   passport.authenticate("jwt", { session: false }),
-//   ticketsController.updateTicket
-// );
+;
 
 /** 
 DELETE 
