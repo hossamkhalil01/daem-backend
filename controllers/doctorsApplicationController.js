@@ -15,7 +15,6 @@ const { removeDir } = require("../utils/fileSystem");
 const SPECIALITIES_LIST = require("../utils/specialities");
 
 const removeApplicationImagesDir = (userId) => {
-
   const APP_IMAGES_BASE = "public/images/doctor_applications/";
 
   // remove the application images dir
@@ -24,7 +23,7 @@ const removeApplicationImagesDir = (userId) => {
 
 const getSpecialities = (req, res) => {
   return sendResponse(res, SPECIALITIES_LIST, statusCodes.success.ok);
-}
+};
 
 const getAllApplications = async (req, res) => {
   // process the query params
@@ -47,24 +46,24 @@ const getAllApplications = async (req, res) => {
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
   }
-}
+};
 
 const getApplication = async (req, res) => {
-
   const id = req.params.id;
   try {
-    const application = await Application.findOne({ _id: id })
-      .populate("applicant", "-password -diseases -role")
+    const application = await Application.findOne({ _id: id }).populate(
+      "applicant",
+      "-password -diseases -role"
+    );
     if (!application)
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
     return sendResponse(res, application, statusCodes.success.ok);
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
   }
-}
+};
 
 const createApplication = async (req, res) => {
-
   const upload = uploadObject.array("images", 2);
 
   upload(req, res, async function (err) {
@@ -79,15 +78,17 @@ const createApplication = async (req, res) => {
     const { about, speciality } = req.body;
 
     const newData = {
-      about, speciality, applicant: req.user._id,
+      about,
+      speciality,
+      applicant: req.user._id,
     };
 
     if (req.files) {
       const nationalId = req.files[0];
       const doctorId = req.files[1];
 
-      nationalId ? newData.nationalId = nationalId.path : '';
-      doctorId ? newData.doctorId = doctorId.path : '';
+      nationalId ? (newData.nationalId = nationalId.path) : "";
+      doctorId ? (newData.doctorId = doctorId.path) : "";
     }
 
     try {
@@ -100,16 +101,20 @@ const createApplication = async (req, res) => {
       return sendError(res, error.message, statusCodes.error.invalidData);
     }
   });
-}
+};
 
 const updateApplicationStatus = async (res, applicationId, newStatus) => {
   try {
-    const updatedApplication = await Application.findOneAndUpdate({ _id: id }, {
-      status: newStatus
-    }, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedApplication = await Application.findOneAndUpdate(
+      { _id: applicationId },
+      {
+        status: newStatus,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     // application not found
     if (!updatedApplication)
@@ -121,10 +126,9 @@ const updateApplicationStatus = async (res, applicationId, newStatus) => {
     // invalid params
     return { updatedApplication: {}, error };
   }
-}
+};
 
 const userToDoctor = async (application, res) => {
-
   // construct doctor info object
   const doctorInfo = {
     speciality: application.speciality,
@@ -135,13 +139,17 @@ const userToDoctor = async (application, res) => {
   const updates = {
     doctorInfo,
     role: ROLES.doc,
-  }
+  };
 
   try {
-    const updatedUser = await User.findOneAndUpdate({ _id: application.applicant }, updates, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: application.applicant },
+      updates,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     // user not found
     if (!updatedUser)
@@ -149,24 +157,25 @@ const userToDoctor = async (application, res) => {
 
     // updated
     return { updatedUser, error: false };
-
   } catch (error) {
     // invalid params
     return { updatedUser: {}, error };
   }
-}
+};
 
 const approveApplication = async (req, res) => {
   const id = req.params.id;
 
-
   //update application
-  const { updatedApplication, error } = await updateApplicationStatus(res, id, "approved");
+  const { updatedApplication, error } = await updateApplicationStatus(
+    res,
+    id,
+    "approved"
+  );
 
   // error occured
   if (error)
     return sendError(res, error.message, statusCodes.error.invalidData);
-
 
   // change user to doctor
   const updatedUser = userToDoctor(updatedApplication, res);
@@ -175,10 +184,9 @@ const approveApplication = async (req, res) => {
     return sendResponse(res, updatedApplication, statusCodes.success.ok);
 
   return sendError(res, error.message, statusCodes.error.serverError);
-}
+};
 
 const rejectApplication = async (req, res) => {
-
   const id = req.params.id;
   try {
     const application = await Application.findOneAndDelete({ _id: id });
@@ -190,12 +198,10 @@ const rejectApplication = async (req, res) => {
     removeApplicationImagesDir(req.user._id);
 
     return sendResponse(res, application, statusCodes.success.noContent);
-
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
   }
-}
-
+};
 
 module.exports = {
   getAllApplications,
@@ -203,5 +209,5 @@ module.exports = {
   createApplication,
   approveApplication,
   rejectApplication,
-  getSpecialities
+  getSpecialities,
 };
