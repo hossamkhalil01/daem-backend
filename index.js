@@ -5,8 +5,6 @@ const ENV = require("./utils/env");
 const passport = require("passport");
 const passportUtils = require("./utils/auth/passport");
 const configs = require("./configs");
-const User = require("./models/user");
-
 const app = express();
 
 // get the enviornment configs
@@ -44,7 +42,7 @@ app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
 app.use("/tickets", require("./routes/tickets"));
 app.use("/doctors", require("./routes/doctors"));
+app.use("/health", require("./routes/health"));
+app.use("/", require("./routes/general"));
 app.use("/articles", require("./routes/articles"));
 app.use("/doctor-applications", require("./routes/doctorApplications"));
-
-app.use("/health", require("./routes/health"));
