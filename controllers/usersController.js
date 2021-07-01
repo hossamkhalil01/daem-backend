@@ -7,7 +7,7 @@ const {
   errorMessages,
 } = require("../utils/responses");
 const { deleteFile } = require("../utils/fileSystem");
-const uploadObj = require("../middlewares/avatarImageUpload");
+const uploadObj = require("../middlewares/uploads/avatarImageUpload");
 
 const getUsers = async (req, res) => {
   // process the query params
@@ -71,10 +71,10 @@ const updateUser = async (res, id, updates) => {
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
 
     // updated
-    return updatedUser;
+    return { updatedUser, error: false };
   } catch (error) {
     // invalid params
-    return false;
+    return { updatedUser: {}, error };
   }
 };
 
@@ -83,9 +83,9 @@ const updateUserRole = async (req, res) => {
   const updates = { role: req.body.role };
 
   //update user
-  const updatedUser = await updateUser(res, id, updates);
+  const { updatedUser, error } = await updateUser(res, id, updates);
 
-  if (updatedUser)
+  if (!error)
     return sendResponse(res, updatedUser, statusCodes.success.ok);
 
   // error occured
@@ -115,8 +115,9 @@ const updateCurrentUser = async (req, res) => {
     }
 
     // update user
-    const updatedUser = await updateUser(res, id, updates);
-    if (updatedUser)
+    const { updatedUser, error } = await updateUser(res, id, updates);
+
+    if (!error)
       return sendResponse(res, updatedUser, statusCodes.success.ok);
 
     // error occured

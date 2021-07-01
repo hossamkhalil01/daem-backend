@@ -15,7 +15,7 @@ const getDoctors = async (req, res) => {
 
   // the pagination options
   const options = {
-    select: '-password -role',
+    select: '-password -role -diseases',
     sort: { _id: -1 },
     page,
     limit,
