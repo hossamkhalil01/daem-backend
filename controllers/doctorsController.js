@@ -51,7 +51,17 @@ const getDoctor = async (req, res) => {
   }
 }
 
+const getAllDoctors = async (req, res) => {
+  try {
+    const doctors = await User.find({role:"doctor"}).select('_id firstname lastname');;
+    return sendResponse(res, doctors, statusCodes.success.ok);
+  } catch (error) {
+    return sendError(res, error.message, statusCodes.error.invalidData);
+  }
+};
+
 module.exports = {
+  getAllDoctors,
   getDoctors,
   getDoctor
 };
