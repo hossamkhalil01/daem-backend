@@ -26,7 +26,7 @@ mongoose
     console.log(err);
   });
 
-/* socket configuration */
+
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
   cors: {
@@ -34,6 +34,8 @@ const io = require("socket.io")(server, {
     methode: "*",
   },
 });
+
+
 let sockets= {};
 
 global.io = io; //added
@@ -43,13 +45,13 @@ module.exports = sockets;
 io.on("connection", (socket) => {
   socket.on("authenticated", (userId) => {
     sockets[socket.id] = userId;
-    console.log(sockets);
   });
   socket.on("disconnect", function () {
     delete sockets[socket.id];
-    console.log(sockets);
   });
 });
+
+
 
 /* Middlewares */
 app.use(express.json());
@@ -66,9 +68,9 @@ app.use(passport.initialize());
 app.use("/auth", require("./routes/auth"));
 app.use("/users", require("./routes/users"));
 app.use("/tickets", require("./routes/tickets"));
+app.use("/notifications", require("./routes/notifications"));
 app.use("/doctors", require("./routes/doctors"));
 app.use("/health", require("./routes/health"));
 app.use("/", require("./routes/general"));
 app.use("/articles", require("./routes/articles"));
 app.use("/doctor-applications", require("./routes/doctorApplications"));
-app.use("/notifications", require("./routes/notifications"));

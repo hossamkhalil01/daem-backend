@@ -57,7 +57,8 @@ const newCommentNotification = async ({ authorId, ticketId }) => {
     const socketIds = Object.keys(global.sockets);
     socketIds.forEach((socketId) => {
       if (sockets[socketId] == params.recipient){
-        io.to(socketId).emit("newNotification", notification);
+        {io.to(socketId).emit("newNotification", notification);
+      }
       }
     });
   } catch (error) {

@@ -14,7 +14,6 @@ const notificationSchema = new Schema(
     },
     actor: {
       type: String,
-      required : true
     },
     ticket: {
       type: Schema.Types.ObjectId,
