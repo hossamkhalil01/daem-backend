@@ -1,10 +1,9 @@
-require("dotenv").config();
+const ENV = require("./utils/env");
 
 const config = {
   dev: {
-    DB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/daem",
-
-    PORT: process.env.PORT || 8000,
+    DB_URI: ENV.getVar("MONGODB_URI") || "mongodb://localhost:27017/daem",
+    PORT: ENV.getVar("PORT") || 8000,
   },
 
   prod: {},
