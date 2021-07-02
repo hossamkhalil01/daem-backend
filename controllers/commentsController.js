@@ -6,7 +6,7 @@ const {
   errorMessages,
 } = require("../utils/responses");
 const { extractPaginationInfo } = require("../utils/pagination");
-
+const notificationsController = require("../controllers/notificationsController");
 const getComments = async (req, res) => {
   const [{ limit, page }, filter] = extractPaginationInfo(req.query);
   filter["ticket"] = req.params.ticketId;
@@ -41,6 +41,11 @@ const createComment = async (req, res) => {
   try {
     let comment = await Comment.create(req.body);
     comment = await comment.populate("author","firstname lastname avatar").execPopulate();
+    if (comment.author.role === "doctor")
+    await notificationsController.newCommentNotification({
+      authorId: comment.author,
+      ticketId: comment.ticket,
+    });
     return sendResponse(res, comment, statusCodes.success.created);
   } catch (error) {
     return sendError(res, error.message, statusCodes.error.invalidData);
