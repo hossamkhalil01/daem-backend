@@ -9,7 +9,7 @@ const {
   sendResponse,
   errorMessages,
 } = require("../utils/responses");
-
+const notificationsController = require("../controllers/notificationsController");
 const uploadObject = require("../middlewares/uploads/applicationImagesUpload");
 const { removeDir } = require("../utils/fileSystem");
 const SPECIALITIES_LIST = require("../utils/specialities");
@@ -176,7 +176,10 @@ const approveApplication = async (req, res) => {
   // error occured
   if (error)
     return sendError(res, error.message, statusCodes.error.invalidData);
-
+  await notificationsController.newApplicationNotification({
+    recipient: updatedApplication.applicant,
+    appStatus: "approved",
+  });
   // change user to doctor
   const updatedUser = userToDoctor(updatedApplication, res);
 
@@ -193,7 +196,10 @@ const rejectApplication = async (req, res) => {
     // not found
     if (!application)
       return sendError(res, errorMessages.notFound, statusCodes.error.notFound);
-
+      await notificationsController.newApplicationNotification({
+        recipient: application.applicant,
+        appStatus: "rejected",
+      });
     // remove the application images dir
     removeApplicationImagesDir(req.user._id);
 
