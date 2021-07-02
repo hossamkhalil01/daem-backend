@@ -6,6 +6,7 @@ const passport = require("passport");
 const passportUtils = require("./utils/auth/passport");
 const configs = require("./configs");
 const app = express();
+const http = require("http");
 
 // get the enviornment configs
 const curr_env = ENV.getVar("NODE_ENV") || "dev";
@@ -16,15 +17,39 @@ mongoose
   .connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("connected to mongodb");
-    app.listen(PORT, (err) => {
+    server.listen(PORT, (err) => {
       if (err) return console.log(err);
-
       return console.log("Server started on port: " + PORT);
     });
   })
   .catch((err) => {
     console.log(err);
   });
+
+/* socket configuration */
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methode: "*",
+  },
+});
+let sockets= {};
+
+global.io = io; //added
+global.sockets = sockets;
+
+module.exports = sockets;
+io.on("connection", (socket) => {
+  socket.on("authenticated", (userId) => {
+    sockets[socket.id] = userId;
+    console.log(sockets);
+  });
+  socket.on("disconnect", function () {
+    delete sockets[socket.id];
+    console.log(sockets);
+  });
+});
 
 /* Middlewares */
 app.use(express.json());
@@ -46,3 +71,4 @@ app.use("/health", require("./routes/health"));
 app.use("/", require("./routes/general"));
 app.use("/articles", require("./routes/articles"));
 app.use("/doctor-applications", require("./routes/doctorApplications"));
+app.use("/notifications", require("./routes/notifications"));
