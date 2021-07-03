@@ -85,7 +85,7 @@ Results: delete Tickets
 **/
 Router.delete(
   "/:id",
-  [passport.authenticate("jwt", { session: false }), isModerator],
+  passport.authenticate("jwt", { session: false }),
   ticketsController.deleteTicket
 );
 
